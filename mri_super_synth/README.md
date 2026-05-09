@@ -63,7 +63,7 @@ SuperSynth can run with a minimal `FREESURFER_HOME` that only includes:
 From this repository checkout:
 
 ```bash
-cd /home/runner/work/freesurfer/freesurfer
+cd /path/to/freesurfer-repo
 ./mri_super_synth/install_standalone_supersynth.sh \
   --dest /absolute/path/to/supersynth-standalone \
   --venv /absolute/path/to/supersynth-venv \
@@ -84,9 +84,9 @@ python "$FREESURFER_HOME/python/packages/SuperSynth/scripts/inference.py" --help
 export STANDALONE_FS_HOME=/absolute/path/to/supersynth-standalone
 mkdir -p "$STANDALONE_FS_HOME/python/packages" "$STANDALONE_FS_HOME/models"
 
-cp -R /home/runner/work/freesurfer/freesurfer/mri_super_synth/SuperSynth \
+cp -R /path/to/freesurfer-repo/mri_super_synth/SuperSynth \
   "$STANDALONE_FS_HOME/python/packages/"
-cp /home/runner/work/freesurfer/freesurfer/distribution/FreeSurferColorLUT.txt \
+cp /path/to/freesurfer-repo/distribution/FreeSurferColorLUT.txt \
   "$STANDALONE_FS_HOME/FreeSurferColorLUT.txt"
 
 curl -fL \
