@@ -49,3 +49,73 @@ The command line options are:
 ## Prerequisites:
 
 The first time you run the method, it will prompt you to download the machine learning model files, which are not distributed with the code.
+
+## Standalone install (without full FreeSurfer), including Apple Silicon (M4)
+
+SuperSynth can run with a minimal `FREESURFER_HOME` that only includes:
+
+- `python/packages/SuperSynth/...`
+- `models/SuperSynth_August_2025.pth`
+- `FreeSurferColorLUT.txt` at the root of `FREESURFER_HOME`
+
+### Option A (recommended): use the helper installer script
+
+From this repository checkout:
+
+```bash
+cd /path/to/freesurfer-repo
+./mri_super_synth/install_standalone_supersynth.sh \
+  --dest /absolute/path/to/supersynth-standalone \
+  --venv /absolute/path/to/supersynth-venv \
+  --download-model
+```
+
+Then:
+
+```bash
+export FREESURFER_HOME=/absolute/path/to/supersynth-standalone
+source /absolute/path/to/supersynth-venv/bin/activate
+python "$FREESURFER_HOME/python/packages/SuperSynth/scripts/inference.py" --help
+```
+
+### Option B: manual setup
+
+```bash
+export STANDALONE_FS_HOME=/absolute/path/to/supersynth-standalone
+mkdir -p "$STANDALONE_FS_HOME/python/packages" "$STANDALONE_FS_HOME/models"
+
+cp -R /path/to/freesurfer-repo/mri_super_synth/SuperSynth \
+  "$STANDALONE_FS_HOME/python/packages/"
+cp /path/to/freesurfer-repo/distribution/FreeSurferColorLUT.txt \
+  "$STANDALONE_FS_HOME/FreeSurferColorLUT.txt"
+
+curl -fL \
+  https://ftp.nmr.mgh.harvard.edu/pub/dist/lcnpublic/dist/SuperSynth_Iglesias_2025/SuperSynth_August_2025.pth \
+  -o "$STANDALONE_FS_HOME/models/SuperSynth_August_2025.pth"
+```
+
+Create a Python environment and install runtime dependencies:
+
+```bash
+python3 -m venv /absolute/path/to/supersynth-venv
+source /absolute/path/to/supersynth-venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install torch numpy scipy nibabel
+```
+
+Set `FREESURFER_HOME` and run:
+
+```bash
+export FREESURFER_HOME=/absolute/path/to/supersynth-standalone
+python "$FREESURFER_HOME/python/packages/SuperSynth/scripts/inference.py" \
+  --i /absolute/path/to/input.mgz \
+  --o /absolute/path/to/output_dir \
+  --mode invivo \
+  --model_file "$FREESURFER_HOME/models/SuperSynth_August_2025.pth" \
+  --device cpu
+```
+
+### Device note for M4 MacBook Air
+
+Current SuperSynth code supports `--device cpu` and `--device cuda`.
+On Apple Silicon, use `--device cpu`.
